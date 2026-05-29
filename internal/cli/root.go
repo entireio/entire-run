@@ -1,9 +1,6 @@
 package cli
 
 import (
-	"fmt"
-
-	"github.com/entireio/entire-run/internal/config"
 	"github.com/spf13/cobra"
 )
 
@@ -26,43 +23,20 @@ func NewRootCommand(opts Options) *cobra.Command {
 	}
 
 	cmd := &cobra.Command{
-		Use:           "entire-run",
-		Short:         "Template external command plugin for the Entire CLI",
+		Use:           "entire-run [agent] [args...]",
+		Short:         "Launch an Entire-enabled agent in the current directory",
+		Args:          cobra.ArbitraryArgs,
 		SilenceUsage:  true,
 		SilenceErrors: true,
-		Long: `entire-run is a minimal, testable external-command
-plugin for the Entire CLI.
-
-It demonstrates the binary naming convention, parent-provided environment, and
-per-plugin durable data directory used by Entire external commands.`,
+		Long: `entire-run lists the agents enabled for Entire in the current
+repository, lets you pick one, and launches that agent in the current
+directory.`,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return runStatus(cmd, opts)
+			return runLauncher(cmd.Context(), cmd.OutOrStdout(), args)
 		},
 	}
 
 	cmd.AddCommand(newDoctorCommand(opts.Env))
-	cmd.AddCommand(newConfigCommand(opts.Env))
 	cmd.AddCommand(newVersionCommand(opts.Version))
 	return cmd
-}
-
-func runStatus(cmd *cobra.Command, opts Options) error {
-	out := cmd.OutOrStdout()
-	fmt.Fprintln(out, "entire-run")
-	fmt.Fprintf(out, "version: %s\n", opts.Version)
-	fmt.Fprintf(out, "entire cli: %s\n", valueOrUnset(opts.Env.CLIVersion))
-	fmt.Fprintf(out, "repo root: %s\n", valueOrUnset(opts.Env.RepoRoot))
-	fmt.Fprintf(out, "plugin data: %s\n", valueOrUnset(opts.Env.PluginDataDir))
-
-	if opts.Env.PluginDataDir == "" {
-		fmt.Fprintln(out, "greeting: <unavailable until ENTIRE_PLUGIN_DATA_DIR is set>")
-		return nil
-	}
-
-	cfg, err := config.Load(opts.Env.PluginDataDir)
-	if err != nil {
-		return err
-	}
-	fmt.Fprintf(out, "greeting: %s\n", cfg.Greeting)
-	return nil
 }

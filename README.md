@@ -1,17 +1,22 @@
-# Entire Run
+# entire-run
 
-A starter repository for Entire CLI plugins. 
+An Entire CLI plugin that launches one of the agents enabled for Entire in the
+current repository.
 
 Entire CLI plugins are plain executables named `entire-<name>` on `PATH`.
 When a user runs `entire <name>`, the parent CLI dispatches to that binary and
 passes the remaining arguments through unchanged.
 
-This plugin builds a binary named `entire-run`,
-which is invoked as:
+This plugin builds a binary named `entire-run`, invoked as:
 
 ```sh
 entire run
 ```
+
+With no arguments, it shells out to `entire agent list`, shows the agents with
+Entire hooks installed for the current repository, and launches the selected
+agent in the foreground. If only one agent is enabled, it launches that agent
+immediately.
 
 ## Quick Start
 
@@ -21,17 +26,31 @@ entire run
 mise install
 mise run test
 mise run build
+```
 
 ### Install with the CLI
 
 ```sh
 entire plugin install ./entire-run
-entire run doctor
+```
+
+### Usage
+
+```sh
+# Pick an enabled agent from the menu
+entire run
+
+# Launch a specific enabled agent
+entire run codex
+entire run claude-code
+
+# Pass extra arguments to the agent after the agent name
+entire run codex -- --model gpt-5
 ```
 
 ### Local Execution
 
-For local development without installing the binary, run it directly:
+For local development without installing the binary:
 
 ```sh
 go run ./cmd/entire-run
@@ -39,26 +58,12 @@ go run ./cmd/entire-run
 
 ### Subcommands
 
-Some commands, such as `doctor` and `config`, expect to run through the Entire
-CLI so `ENTIRE_PLUGIN_DATA_DIR` is present. For standalone testing, set it:
+The `doctor` command expects to run through the Entire CLI so
+`ENTIRE_PLUGIN_DATA_DIR` is present. For standalone testing, set it:
 
 ```sh
 ENTIRE_PLUGIN_DATA_DIR="$(mktemp -d)" go run ./cmd/entire-run doctor
 ```
-
-## Rename This Template
-
-To turn the template into a real plugin:
-
-1. Pick a bare plugin name, for example `deploy`.
-2. Rename `cmd/entire-run` to `cmd/entire-deploy`.
-3. Replace `entire-run` in `mise.toml`, CI, README, and Go command
-   metadata.
-4. Update `go.mod` to your final module path.
-5. Keep the built executable name prefixed with `entire-`; the command becomes
-   `entire deploy`.
-
-Or ask your agent to do this for you. ;) 
 
 ## Entire Plugin Contract
 
@@ -75,12 +80,8 @@ filters the environment before launching third-party plugins; users can opt
 additional variables in with `ENTIRE_PLUGIN_ENV`, for example:
 
 ```sh
-ENTIRE_PLUGIN_ENV='AWS_*,EDITOR' entire deploy
+ENTIRE_PLUGIN_ENV='AWS_*,EDITOR' entire run
 ```
-
-External-command plugins do not use a manifest and do not participate in
-checkpoint/session protocols. If you need full agent lifecycle integration, use
-the separate external agent plugin protocol instead.
 
 ## Useful Commands
 

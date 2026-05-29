@@ -1,7 +1,7 @@
-// entire-run is a sample Entire CLI external command.
+// entire-run is an Entire CLI external command.
 //
-// Once built as an executable named `entire-run`, the parent
-// Entire CLI dispatches it when a user runs `entire run`.
+// Once built as an executable named `entire-run`, the parent Entire CLI
+// dispatches it when a user runs `entire run`.
 package main
 
 import (
