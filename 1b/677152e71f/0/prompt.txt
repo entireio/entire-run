@@ -1,1 +1,1 @@
-This repo was created from a template. Rename entire-plugin-template to entire-run across the codebase and config files.
+commit/push
