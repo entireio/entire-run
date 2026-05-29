@@ -1,13 +1,1 @@
 commit/push
-
----
-
-The menu shows the agent symbol in parenthesis. We don't need that, so remove it.
-
----
-
-Try again
-
----
-
-Add a line === entire-run === followed by an empty line, then the menu.
