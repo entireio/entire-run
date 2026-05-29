@@ -1,13 +1,1 @@
 commit/push
-
----
-
-For all agents supported by Entire CLI, figured out what the --yolo cmd line param is. Do research and show me what you find.
-
----
-
-Continue
-
----
-
-Ok, implement a --yolo flag for "entire run" that passes the respective YOLO flag to the agent. For Pi, show a warning that --yolo is not supported.
