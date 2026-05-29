@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/entireio/entire-plugin-template/internal/config"
+	"github.com/entireio/entire-run/internal/config"
 	"github.com/spf13/cobra"
 )
 
