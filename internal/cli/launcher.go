@@ -71,6 +71,9 @@ func pickAgent(out io.Writer, in *os.File, specs []entirecli.AgentSpec) (entirec
 		return specs[0], nil
 	}
 
+	fmt.Fprintln(out, "=== entire-run ===")
+	fmt.Fprintln(out)
+
 	spec, err := selectAgentFn(specs)
 	if err != nil {
 		if errors.Is(err, ui.ErrSelectCanceled) {
@@ -84,7 +87,7 @@ func pickAgent(out io.Writer, in *os.File, specs []entirecli.AgentSpec) (entirec
 func selectAgentInteractive(specs []entirecli.AgentSpec) (entirecli.AgentSpec, error) {
 	labels := make([]string, 0, len(specs))
 	for _, spec := range specs {
-		labels = append(labels, fmt.Sprintf("%s (%s)", spec.Display, spec.EntireName))
+		labels = append(labels, spec.Display)
 	}
 	idx, err := ui.Select("Launch agent", "Choose an option, press enter to run.", labels)
 	if err != nil {
