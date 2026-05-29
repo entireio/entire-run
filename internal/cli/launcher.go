@@ -20,7 +20,11 @@ var (
 	selectAgentFn     = selectAgentInteractive
 )
 
-func runLauncher(ctx context.Context, out io.Writer, args []string) error {
+type launcherOptions struct {
+	Yolo bool
+}
+
+func runLauncher(ctx context.Context, out io.Writer, args []string, opts launcherOptions) error {
 	specs, err := configuredSpecsFn(ctx)
 	if err != nil {
 		return err
@@ -43,6 +47,15 @@ func runLauncher(ctx context.Context, out io.Writer, args []string) error {
 		spec, pickErr = pickAgent(out, os.Stdin, specs)
 		if pickErr != nil {
 			return pickErr
+		}
+	}
+
+	if opts.Yolo {
+		if len(spec.YoloArgs) > 0 {
+			agentArgs = append(append([]string{}, spec.YoloArgs...), agentArgs...)
+		}
+		if spec.YoloWarning != "" {
+			fmt.Fprint(out, spec.YoloWarning)
 		}
 	}
 

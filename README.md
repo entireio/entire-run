@@ -44,8 +44,11 @@ entire run
 entire run codex
 entire run claude-code
 
+# Launch an agent in its no-approval mode when supported
+entire run --yolo codex
+
 # Pass extra arguments to the agent after the agent name
-entire run codex -- --model gpt-5
+entire run codex --model gpt-5
 ```
 
 ### Local Execution

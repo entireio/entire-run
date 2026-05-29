@@ -22,6 +22,7 @@ func NewRootCommand(opts Options) *cobra.Command {
 		opts.Version = "dev"
 	}
 
+	var yolo bool
 	cmd := &cobra.Command{
 		Use:           "entire-run [agent] [args...]",
 		Short:         "Launch an Entire-enabled agent in the current directory",
@@ -32,10 +33,12 @@ func NewRootCommand(opts Options) *cobra.Command {
 repository, lets you pick one, and launches that agent in the current
 directory.`,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return runLauncher(cmd.Context(), cmd.OutOrStdout(), args)
+			return runLauncher(cmd.Context(), cmd.OutOrStdout(), args, launcherOptions{Yolo: yolo})
 		},
 	}
 
+	cmd.Flags().BoolVar(&yolo, "yolo", false, "Launch the selected agent in its no-approval mode when supported")
+	cmd.Flags().SetInterspersed(false)
 	cmd.AddCommand(newDoctorCommand(opts.Env))
 	cmd.AddCommand(newVersionCommand(opts.Version))
 	return cmd

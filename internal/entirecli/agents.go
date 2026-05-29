@@ -24,17 +24,19 @@ type AgentSpec struct {
 	Display     string
 	Binary      string
 	DefaultArgs []string
+	YoloArgs    []string
+	YoloWarning string
 }
 
 var AgentSpecs = []AgentSpec{
-	{EntireName: "claude-code", Display: "Claude Code", Binary: "claude"},
-	{EntireName: "codex", Display: "Codex", Binary: "codex"},
-	{EntireName: "gemini", Display: "Gemini CLI", Binary: "gemini"},
-	{EntireName: "copilot-cli", Display: "Copilot CLI", Binary: "copilot"},
-	{EntireName: "cursor", Display: "Cursor", Binary: "agent", DefaultArgs: []string{"--force"}},
-	{EntireName: "factoryai-droid", Display: "Factory AI Droid", Binary: "droid"},
-	{EntireName: "opencode", Display: "OpenCode", Binary: "opencode"},
-	{EntireName: "pi", Display: "Pi", Binary: "pi"},
+	{EntireName: "claude-code", Display: "Claude Code", Binary: "claude", YoloArgs: []string{"--dangerously-skip-permissions"}},
+	{EntireName: "codex", Display: "Codex", Binary: "codex", YoloArgs: []string{"--dangerously-bypass-approvals-and-sandbox"}},
+	{EntireName: "gemini", Display: "Gemini CLI", Binary: "gemini", YoloArgs: []string{"--yolo"}},
+	{EntireName: "copilot-cli", Display: "Copilot CLI", Binary: "copilot", YoloArgs: []string{"--yolo"}},
+	{EntireName: "cursor", Display: "Cursor", Binary: "agent", YoloArgs: []string{"--yolo"}},
+	{EntireName: "factoryai-droid", Display: "Factory AI Droid", Binary: "droid", YoloArgs: []string{"exec", "--skip-permissions-unsafe"}},
+	{EntireName: "opencode", Display: "OpenCode", Binary: "opencode", YoloArgs: []string{"run", "--dangerously-skip-permissions"}},
+	{EntireName: "pi", Display: "Pi", Binary: "pi", YoloWarning: "warning: Pi does not support --yolo; launching without YOLO mode\n"},
 }
 
 func SpecFor(name string) (AgentSpec, bool) {

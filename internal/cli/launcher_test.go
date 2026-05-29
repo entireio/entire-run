@@ -26,7 +26,7 @@ func TestRunLauncherLaunchesSelectedAgent(t *testing.T) {
 		return nil
 	}
 
-	if err := runLauncher(context.Background(), ioDiscard{}, []string{"codex", "--ask-for-approval"}); err != nil {
+	if err := runLauncher(context.Background(), ioDiscard{}, []string{"codex", "--ask-for-approval"}, launcherOptions{}); err != nil {
 		t.Fatalf("runLauncher: %v", err)
 	}
 	if launched.EntireName != "codex" {
@@ -43,12 +43,57 @@ func TestRunLauncherRejectsDisabledAgent(t *testing.T) {
 	})
 	defer restore()
 
-	err := runLauncher(context.Background(), ioDiscard{}, []string{"gemini"})
+	err := runLauncher(context.Background(), ioDiscard{}, []string{"gemini"}, launcherOptions{})
 	if err == nil {
 		t.Fatal("expected error")
 	}
 	if !strings.Contains(err.Error(), "not enabled") {
 		t.Fatalf("unexpected error: %v", err)
+	}
+}
+
+func TestRunLauncherPassesYoloArgs(t *testing.T) {
+	restore := stubLauncher(t, []entirecli.AgentSpec{
+		{EntireName: "codex", Display: "Codex", Binary: "codex", YoloArgs: []string{"--dangerously-bypass-approvals-and-sandbox"}},
+	})
+	defer restore()
+
+	var launchedArgs []string
+	launchAgentFn = func(_ context.Context, _ entirecli.AgentSpec, args []string) error {
+		launchedArgs = args
+		return nil
+	}
+
+	if err := runLauncher(context.Background(), ioDiscard{}, []string{"codex", "fix tests"}, launcherOptions{Yolo: true}); err != nil {
+		t.Fatalf("runLauncher: %v", err)
+	}
+	want := []string{"--dangerously-bypass-approvals-and-sandbox", "fix tests"}
+	if !reflect.DeepEqual(launchedArgs, want) {
+		t.Fatalf("args = %#v, want %#v", launchedArgs, want)
+	}
+}
+
+func TestRunLauncherWarnsWhenYoloUnsupported(t *testing.T) {
+	restore := stubLauncher(t, []entirecli.AgentSpec{
+		{EntireName: "pi", Display: "Pi", Binary: "pi", YoloWarning: "warning: Pi does not support --yolo; launching without YOLO mode\n"},
+	})
+	defer restore()
+
+	var out bytes.Buffer
+	var launchedArgs []string
+	launchAgentFn = func(_ context.Context, _ entirecli.AgentSpec, args []string) error {
+		launchedArgs = args
+		return nil
+	}
+
+	if err := runLauncher(context.Background(), &out, []string{"pi"}, launcherOptions{Yolo: true}); err != nil {
+		t.Fatalf("runLauncher: %v", err)
+	}
+	if len(launchedArgs) != 0 {
+		t.Fatalf("args = %#v, want none", launchedArgs)
+	}
+	if !strings.Contains(out.String(), "Pi does not support --yolo") {
+		t.Fatalf("missing warning: %s", out.String())
 	}
 }
 

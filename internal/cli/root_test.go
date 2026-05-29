@@ -2,9 +2,12 @@ package cli
 
 import (
 	"bytes"
+	"context"
+	"reflect"
 	"strings"
 	"testing"
 
+	"github.com/entireio/entire-run/internal/entirecli"
 	"github.com/spf13/cobra"
 )
 
@@ -43,5 +46,28 @@ func TestDoctorCreatesWritablePluginDataDir(t *testing.T) {
 	}
 	if !strings.Contains(out, "plugin data dir: writable") {
 		t.Fatalf("doctor output missing writable status:\n%s", out)
+	}
+}
+
+func TestRootYoloFlagPassesThroughAgentFlags(t *testing.T) {
+	restore := stubLauncher(t, []entirecli.AgentSpec{
+		{EntireName: "codex", Display: "Codex", Binary: "codex", YoloArgs: []string{"--dangerously-bypass-approvals-and-sandbox"}},
+	})
+	defer restore()
+
+	var launchedArgs []string
+	launchAgentFn = func(_ context.Context, _ entirecli.AgentSpec, args []string) error {
+		launchedArgs = args
+		return nil
+	}
+
+	cmd := NewRootCommand(Options{Version: "test-version"})
+	_, err := execute(t, cmd, "--yolo", "codex", "--ask-for-approval", "never")
+	if err != nil {
+		t.Fatalf("execute: %v", err)
+	}
+	want := []string{"--dangerously-bypass-approvals-and-sandbox", "--ask-for-approval", "never"}
+	if !reflect.DeepEqual(launchedArgs, want) {
+		t.Fatalf("args = %#v, want %#v", launchedArgs, want)
 	}
 }
