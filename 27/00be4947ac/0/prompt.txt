@@ -1,9 +1,1 @@
 commit/push
-
----
-
-The project is a plugin for the Entire CLI, see ~/Projects/entire-cli. Similar to ~Projects/entire-sandbox, it should detect which agents are enabled for Entire, show the menu of those (see entire-sandbox setup), but then instead of checkbox, hitting Enter on an agent should launch this agent in the current directory. It's basically a launcher for those agents that are enabled for Entire.
-
----
-
-Change "Enabled Entire agents" to "Launch agent" and "Choose an agent and press enter to launch" to "Choose an option, press enter to run."
