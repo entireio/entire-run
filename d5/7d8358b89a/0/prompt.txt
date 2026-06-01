@@ -1,5 +1,1 @@
 commit/push
-
----
-
-If only one agent is configured for entire, just start it without showing the menu. Keep the first line though.
