@@ -76,7 +76,7 @@ func pickAgent(out io.Writer, in *os.File, specs []entirecli.AgentSpec) (entirec
 		return entirecli.AgentSpec{}, fmt.Errorf("no agents available")
 	}
 	if len(specs) == 1 {
-		fmt.Fprintf(out, "Launching the only enabled agent: %s\n", specs[0].Display)
+		printBanner(out)
 		return specs[0], nil
 	}
 	if !stdinIsTerminalFn(in) {
@@ -84,8 +84,7 @@ func pickAgent(out io.Writer, in *os.File, specs []entirecli.AgentSpec) (entirec
 		return specs[0], nil
 	}
 
-	fmt.Fprintln(out, "=== entire-run ===")
-	fmt.Fprintln(out)
+	printBanner(out)
 
 	spec, err := selectAgentFn(specs)
 	if err != nil {
@@ -95,6 +94,11 @@ func pickAgent(out io.Writer, in *os.File, specs []entirecli.AgentSpec) (entirec
 		return entirecli.AgentSpec{}, err
 	}
 	return spec, nil
+}
+
+func printBanner(out io.Writer) {
+	fmt.Fprintln(out, "=== entire-run ===")
+	fmt.Fprintln(out)
 }
 
 func selectAgentInteractive(specs []entirecli.AgentSpec) (entirecli.AgentSpec, error) {

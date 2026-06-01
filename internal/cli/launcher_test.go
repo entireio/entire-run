@@ -118,6 +118,29 @@ func TestPickAgentNonInteractiveDefaultsToFirst(t *testing.T) {
 	}
 }
 
+func TestPickAgentSingleAgentPrintsBannerWithoutMenu(t *testing.T) {
+	oldSelect := selectAgentFn
+	selectAgentFn = func([]entirecli.AgentSpec) (entirecli.AgentSpec, error) {
+		t.Fatal("selectAgentFn should not be called for a single agent")
+		return entirecli.AgentSpec{}, nil
+	}
+	defer func() { selectAgentFn = oldSelect }()
+
+	var out bytes.Buffer
+	spec, err := pickAgent(&out, os.Stdin, []entirecli.AgentSpec{
+		{EntireName: "codex", Display: "Codex", Binary: "codex"},
+	})
+	if err != nil {
+		t.Fatalf("pickAgent: %v", err)
+	}
+	if spec.EntireName != "codex" {
+		t.Fatalf("picked %q", spec.EntireName)
+	}
+	if out.String() != "=== entire-run ===\n\n" {
+		t.Fatalf("output = %q", out.String())
+	}
+}
+
 func stubLauncher(t *testing.T, specs []entirecli.AgentSpec) func() {
 	t.Helper()
 	oldSpecs := configuredSpecsFn
