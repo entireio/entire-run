@@ -59,7 +59,7 @@ entire run codex --model gpt-5
 
 ## Development
 
-## Local Execution
+### Local Execution
 
 For local development without installing the binary:
 
@@ -67,7 +67,7 @@ For local development without installing the binary:
 go run ./cmd/entire-run
 ```
 
-## Entire Plugin Contract
+### Entire Plugin Contract
 
 The parent CLI supplies these variables when it dispatches a plugin:
 
@@ -85,7 +85,7 @@ additional variables in with `ENTIRE_PLUGIN_ENV`, for example:
 ENTIRE_PLUGIN_ENV='AWS_*,EDITOR' entire run
 ```
 
-## Useful Mise Commands
+### Useful Mise Commands
 
 This project uses [mise](https://mise.jdx.dev/) for task automation and dependency management.
 
