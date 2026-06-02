@@ -1,7 +1,7 @@
-# entire-run
+# Entire Run
 
-An Entire CLI plugin that launches one of the agents enabled for Entire in the
-current repository.
+An [Entire CLI](https://github.com/entireio/cli) plugin that launches one of the agents enabled for Entire in the
+current repository. This way, your sessions are always logged.
 
 Entire CLI plugins are plain executables named `entire-<name>` on `PATH`.
 When a user runs `entire <name>`, the parent CLI dispatches to that binary and
@@ -20,11 +20,17 @@ immediately.
 
 ## Quick Start
 
+### Clone the Repo
+
+```sh
+git clone https://github.com/entireio/entire-upgrade.git
+```
+
 ### Build the Plugin
 
 ```sh
+mise trust
 mise install
-mise run test
 mise run build
 ```
 
@@ -51,21 +57,14 @@ entire run --yolo codex
 entire run codex --model gpt-5
 ```
 
-### Local Execution
+## Development
+
+## Local Execution
 
 For local development without installing the binary:
 
 ```sh
 go run ./cmd/entire-run
-```
-
-### Subcommands
-
-The `doctor` command expects to run through the Entire CLI so
-`ENTIRE_PLUGIN_DATA_DIR` is present. For standalone testing, set it:
-
-```sh
-ENTIRE_PLUGIN_DATA_DIR="$(mktemp -d)" go run ./cmd/entire-run doctor
 ```
 
 ## Entire Plugin Contract
@@ -86,7 +85,9 @@ additional variables in with `ENTIRE_PLUGIN_ENV`, for example:
 ENTIRE_PLUGIN_ENV='AWS_*,EDITOR' entire run
 ```
 
-## Useful Commands
+## Useful Mise Commands
+
+This project uses [mise](https://mise.jdx.dev/) for task automation and dependency management.
 
 ```sh
 mise run fmt        # gofmt -s -w .
